@@ -57,31 +57,31 @@ const cafeGetHandler: RequestHandler = async (req, res) => {
 
 //Add cafe to database
 const cafePostHandler: RequestHandler = async (req, res) => {
+  const { error } = cafeSchema.validate(req.body);
+
+  if (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: error.details[0].message });
+  }
   const connection = await pool.getConnection();
   try {
-    const { error } = cafeSchema.validate(req.body);
-
-    if (error) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: error.details[0].message });
-    }
-
     //Since mySQL does not support sequence, I've stored the number in a table
     //Get the current counter from the database and create UUID
 
     const UUID = generateUUID();
 
     const insertQuery = `INSERT INTO cafe (id, name, description, logo, location) VALUES (?, ?, ?, ?, ?)`;
-
-    // Execute the single query
-    const [result]: any = await connection.execute(insertQuery, [
+    const body = [
       UUID,
       req.body.name,
       req.body.description,
       req.body.logo,
       req.body.location,
-    ]);
+    ];
+
+    // Execute the single query
+    const [result]: any = await connection.execute(insertQuery, body);
 
     if (result.affectedRows > 0) {
       return res.status(StatusCodes.OK).send("Cafe added successfully.");

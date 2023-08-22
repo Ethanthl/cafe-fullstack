@@ -43,32 +43,6 @@ LOCK TABLES `cafe` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `counter_table`
---
-
-DROP TABLE IF EXISTS `counter_table`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `counter_table` (
-  `id` int NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `counter` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO counter_table VALUES (1, "cafe", 10000);
-INSERT INTO counter_table VALUES (2, "employee", 10000);
---
--- Dumping data for table `counter_table`
---
-
-LOCK TABLES `counter_table` WRITE;
-/*!40000 ALTER TABLE `counter_table` DISABLE KEYS */;
-/*!40000 ALTER TABLE `counter_table` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `employee`
 --
 
@@ -82,11 +56,12 @@ CREATE TABLE `employee` (
   `phone_number` int NOT NULL,
   `gender` varchar(45) NOT NULL,
   `cafe_id` varchar(255) NOT NULL,
-  `start_date` date NOT NULL,
+  `start_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idEmployee_UNIQUE` (`id`),
+  UNIQUE KEY `email_address_UNIQUE` (`email_address`),
   KEY `fk_employee_cafe_idx` (`cafe_id`),
-  CONSTRAINT `fk_employee_cafe` FOREIGN KEY (`cafe_id`) REFERENCES `cafe` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_employee_cafe` FOREIGN KEY (`cafe_id`) REFERENCES `cafe` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -108,4 +83,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-22 15:53:43
+-- Dump completed on 2023-08-22 19:24:21
