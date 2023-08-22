@@ -26,13 +26,21 @@ const employeeSchema = Joi.object({
   cafe_id: Joi.string(),
 });
 
-//This handler gets employees
+//This handler gets employees of a cafe if cafe is found
+//If no cafe provided display all
+//If cafe not found empty array
 const employeeGetHandler: RequestHandler = async (req, res) => {
   const connection = await pool.getConnection();
-  const cafeName = req.params.cafe
+  const cafeName = req.query.cafe;
+  //switch queries and execution based on query params
   try {
-    const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
-    const [rows]: any = await connection.execute(selectQuery);
+    const selectQuery = cafeName
+      ? `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.name LIKE ? ORDER BY days_worked DESC `
+      : `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
+    const [rows]: any = await connection.execute(
+      cafeName ? selectQuery : selectQuery,
+      [cafeName]
+    );
 
     return res.status(StatusCodes.OK).json({ employees: rows });
   } catch (error) {
