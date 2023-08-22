@@ -10,7 +10,6 @@ const generateUUID = () => {
   return `UI${uuid}`;
 };
 //Custom phone number validation
-
 const phoneValidator: Joi.CustomValidator<string> = (value, helpers) => {
   if (!/^[89]\d{7}$/.test(value)) {
     return helpers.error("any.invalid");
@@ -24,11 +23,13 @@ const employeeSchema = Joi.object({
   email_address: Joi.string().email().required(),
   phone_number: Joi.string().custom(phoneValidator).required(),
   gender: Joi.string().required(),
-  cafe_id: Joi.string().required(),
+  cafe_id: Joi.string(),
 });
 
+//This handler gets employees
 const employeeGetHandler: RequestHandler = async (req, res) => {
   const connection = await pool.getConnection();
+  const cafeName = req.params.cafe
   try {
     const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
     const [rows]: any = await connection.execute(selectQuery);

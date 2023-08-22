@@ -55,7 +55,7 @@ CREATE TABLE `employee` (
   `email_address` varchar(255) NOT NULL,
   `phone_number` int NOT NULL,
   `gender` varchar(45) NOT NULL,
-  `cafe_id` varchar(255) NOT NULL,
+  `cafe_id` varchar(255) DEFAULT NULL,
   `start_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idEmployee_UNIQUE` (`id`),
@@ -83,4 +83,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-22 19:24:21
+-- Dump completed on 2023-08-22 20:03:15
