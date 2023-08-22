@@ -37,10 +37,9 @@ const employeeGetHandler: RequestHandler = async (req, res) => {
     const selectQuery = cafeName
       ? `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.name LIKE ? ORDER BY days_worked DESC `
       : `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
-    const [rows]: any = await connection.execute(
-      cafeName ? selectQuery : selectQuery,
-      [cafeName]
-    );
+    const [rows]: any = cafeName
+      ? await connection.execute(selectQuery, [cafeName])
+      : await connection.execute(selectQuery);
 
     return res.status(StatusCodes.OK).json({ employees: rows });
   } catch (error) {
@@ -51,6 +50,7 @@ const employeeGetHandler: RequestHandler = async (req, res) => {
   }
 };
 
+//Create employee entry
 const employeePostHandler: RequestHandler = async (req, res) => {
   const { error } = employeeSchema.validate(req.body);
 
@@ -88,6 +88,7 @@ const employeePostHandler: RequestHandler = async (req, res) => {
   }
 };
 
+//Update an employee details
 const employeePutHandler: RequestHandler = async (req, res) => {
   const { error } = employeeSchema.validate(req.body);
 

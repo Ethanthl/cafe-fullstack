@@ -96,7 +96,74 @@ const cafePostHandler: RequestHandler = async (req, res) => {
   }
 };
 
+//Update an Cafe details
+const cafePutHandler: RequestHandler = async (req, res) => {
+  const { error } = cafeSchema.validate(req.body);
+
+  if (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: error.details[0].message });
+  }
+  const connection = await pool.getConnection();
+  try {
+    const cafeId = req.params.id;
+    const updatedData = req.body;
+    //get employee data
+    const [rows]: any = await connection.execute(
+      "SELECT * FROM cafe WHERE id = ?",
+      [cafeId]
+    );
+    if (rows.length === 0) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "Cafe not found" });
+      return;
+    }
+    const cafeData = rows[0];
+    //Update cafe data
+    const mergedData = { ...cafeData, ...updatedData };
+    delete mergedData.id;
+
+    const updateQuery = `UPDATE cafe SET name = ?, description = ?,logo = ?, location = ? WHERE id = ?`;
+    const [update]: any = await connection.execute(updateQuery, [
+      mergedData.name,
+      mergedData.description,
+      mergedData.logo,
+      mergedData.location,
+      cafeId,
+    ]);
+
+    if (update.affectedRows > 0) {
+      res.status(StatusCodes.OK).json({ message: "Cafe updated successfully" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.code });
+  } finally {
+    connection.release();
+  }
+};
+
+//Delete a cafe
+const cafeDeleteHandler: RequestHandler = async (req, res) => {
+  const connection = await pool.getConnection();
+  try {
+    const employeeId = req.params.id;
+    const deleteQuery = `DELETE FROM cafe WHERE id = ?`;
+    const [result]: any = await connection.execute(deleteQuery, [employeeId]);
+
+    if (result.affectedRows > 0) {
+      res.status(StatusCodes.OK).json({ message: "cafe deleted" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.BAD_GATEWAY).json({ message: error.code });
+  } finally {
+    connection.release();
+  }
+};
 CafeController.get("/cafe", cafeGetHandler);
 CafeController.post("/cafe", cafePostHandler);
+CafeController.put("/cafe/:id", cafePutHandler);
+CafeController.delete("/cafe/:id", cafeDeleteHandler);
 
 export default CafeController;
