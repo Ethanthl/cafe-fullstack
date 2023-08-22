@@ -29,24 +29,34 @@ const employeeSchema = Joi.object({
 //This handler gets employees of a cafe if cafe is found
 //If no cafe provided display all
 //If cafe not found empty array
+//For this query I've decided to use cafe id as the query param as it suits the frontend request better
 const employeeGetHandler: RequestHandler = async (req, res) => {
   const connection = await pool.getConnection();
-  const cafeName = req.query.cafe;
-  //switch queries and execution based on query params
-  try {
-    const selectQuery = cafeName
-      ? `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.name LIKE ? ORDER BY days_worked DESC `
-      : `SELECT e.id, e.name, e.email_address, e.phone_number,DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
-    const [rows]: any = cafeName
-      ? await connection.execute(selectQuery, [cafeName])
-      : await connection.execute(selectQuery);
+  const cafeId = req.query.cafe;
 
-    return res.status(StatusCodes.OK).json({ employees: rows });
-  } catch (error) {
-    console.log(error);
-    return res.status(StatusCodes.BAD_REQUEST).json({ message: error.code });
-  } finally {
-    connection.release();
+  if (cafeId) {
+    try {
+      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.id = ? ORDER BY days_worked DESC `;
+      const [rows]: any = await connection.execute(selectQuery, [cafeId]);
+      console.log(rows);
+      return res.status(StatusCodes.OK).json({ employees: rows });
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: error.code });
+    } finally {
+      connection.release();
+    }
+  } else {
+    try {
+      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
+      const [rows]: any = await connection.execute(selectQuery);
+      return res.status(StatusCodes.OK).json({ employees: rows });
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: error.code });
+    } finally {
+      connection.release();
+    }
   }
 };
 
