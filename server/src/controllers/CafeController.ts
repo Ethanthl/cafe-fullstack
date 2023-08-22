@@ -121,7 +121,6 @@ const cafePutHandler: RequestHandler = async (req, res) => {
     const cafeData = rows[0];
     //Update cafe data
     const mergedData = { ...cafeData, ...updatedData };
-    delete mergedData.id;
 
     const updateQuery = `UPDATE cafe SET name = ?, description = ?,logo = ?, location = ? WHERE id = ?`;
     const [update]: any = await connection.execute(updateQuery, [

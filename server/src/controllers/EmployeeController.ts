@@ -117,7 +117,6 @@ const employeePutHandler: RequestHandler = async (req, res) => {
     }
     //Update employee data
     const mergedData = { ...employeeData, ...updatedData };
-    delete mergedData.id;
 
     const updateQuery = `UPDATE employee SET name = ?, email_address = ?,phone_number = ?, gender = ?, cafe_id, start_date = ? WHERE id = ?`;
     const [update]: any = await connection.execute(updateQuery, [
