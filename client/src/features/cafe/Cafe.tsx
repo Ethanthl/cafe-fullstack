@@ -44,7 +44,7 @@ const Cafe = () => {
       cellRenderer: function (params: any) {
         const id = params.data.id; // Assuming the ID property exists in the row data
         const employeeCount = params.data.employees;
-        return <Link to={`/cafe/${id}/employees`}>{employeeCount}</Link>;
+        return <Link to={`/employees?cafe=${id}`}>{employeeCount}</Link>;
       },
     },
     {
@@ -60,7 +60,7 @@ const Cafe = () => {
         const id = params.data.id; // Assuming the ID property exists in the row data
         return (
           <>
-            <Button href={`/cafe/${id}`}>Edit</Button>
+            <Button href={`/cafes/${id}`}>Edit</Button>
             <Button
               onClick={() => {
                 dispatch(deleteCafes(id)).then(() => {
@@ -88,7 +88,7 @@ const Cafe = () => {
         }}
       >
         <h1>Cafe Manager</h1>{" "}
-        <Button variant="contained" href="/cafe/add">
+        <Button variant="contained" href="/cafes/add">
           Add Cafe
         </Button>
       </Box>

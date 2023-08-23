@@ -12,14 +12,6 @@ const CafeAdd = () => {
     location: string;
     employees: number;
   }
-  let initialValues: FormValues = {
-    id: null,
-    name: "",
-    description: "",
-    logo: null,
-    location: "",
-    employees: 0,
-  };
 
   const dispatch = useAppDispatch();
   const handleFormSubmit = async (values: FormValues) => {

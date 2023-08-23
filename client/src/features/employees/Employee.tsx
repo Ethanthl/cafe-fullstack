@@ -4,7 +4,7 @@ import { deleteEmployee, fetchEmployees } from "./employeeSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useParams } from "react-router-dom";
-import { Button, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import Grid from "../../components/Grid";
 import { ColDef } from "ag-grid-community";
 
@@ -61,7 +61,20 @@ const Employee = () => {
   ];
   return (
     <Container maxWidth={false}>
-      <h1>Employees</h1>
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          height: "fit-content",
+        }}
+      >
+        <h1>Empoyees</h1>{" "}
+        <Button variant="contained" href="/employees/add">
+          Add Employee
+        </Button>
+      </Box>
       <div
         id="myGrid"
         style={{ position: "relative", height: "100%", width: "100%" }}

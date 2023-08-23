@@ -56,7 +56,7 @@ CREATE TABLE `employee` (
   `phone_number` int NOT NULL,
   `gender` varchar(10) NOT NULL,
   `cafe_id` varchar(10) DEFAULT NULL,
-  `start_date` datetime NOT NULL,
+  `start_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idEmployee_UNIQUE` (`id`),
   UNIQUE KEY `email_address_UNIQUE` (`email_address`),

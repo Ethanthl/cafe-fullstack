@@ -5,10 +5,18 @@ export interface Employee {
   id: string;
   name: string;
   email_address: string;
+  phone_number: string;
+  gender: string;
+  cafe_name: string | null;
+  days_worked: number | null;
+}
+
+export interface NewEmployee {
+  name: string;
+  email_address: string;
   phone_number: number;
   gender: string;
-  cafe_name: string;
-  days_worked: number;
+  cafe_id: string | null;
 }
 
 export interface EmployeeState {
@@ -19,15 +27,42 @@ export interface EmployeeState {
 //fetch employee
 export const fetchEmployees = createAsyncThunk(
   "fetchEmployees",
-  async (message: string | undefined, thunkAPI) => {
-    const cafeId = message;
+  async (data: string | undefined, thunkAPI) => {
+    const cafeId = data;
     const response = await axios.get(
-      `http://localhost:5000/api/employee?cafe=${cafeId}`
+      `http://localhost:5000/api/employee`
     );
 
     return await response.data;
   }
 );
+
+//fetch Single employee
+export const fetchSingleEmployee = createAsyncThunk(
+  "fetchEmployees",
+  async (data: string, thunkAPI) => {
+    const employeeId = data;
+    const response = await axios.get(
+      `http://localhost:5000/api/employee/${employeeId}`
+    );
+
+    return await response.data;
+  }
+);
+
+//add employee
+export const addEmployee = createAsyncThunk(
+  "fetchEmployees",
+  async (data: NewEmployee | undefined, thunkAPI) => {
+    console.log(data)
+    const response = await axios.post(
+      `http://localhost:5000/api/employee`,
+      data
+    );
+    return await response.data;
+  }
+);
+
 //delete employee
 export const deleteEmployee = createAsyncThunk(
   "fetchEmployees",
@@ -40,7 +75,6 @@ export const deleteEmployee = createAsyncThunk(
     return await response.data;
   }
 );
-
 
 export const employeeSlice = createSlice({
   name: "employees",

@@ -58,7 +58,6 @@ export const addCafe = createAsyncThunk(
           ([key]) => !propertiesToRemove.includes(key)
         )
       );
-      console.log(newData);
       const response = await axios.post(
         `http://localhost:5000/api/cafe/`,
         newData,

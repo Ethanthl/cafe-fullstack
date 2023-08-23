@@ -23,7 +23,6 @@ const employeeSchema = Joi.object({
   email_address: Joi.string().email().required(),
   phone_number: Joi.string().custom(phoneValidator).required(),
   gender: Joi.string().required(),
-  cafe_id: Joi.string(),
 });
 
 //This handler gets employees of a cafe if cafe is found
@@ -33,10 +32,10 @@ const employeeSchema = Joi.object({
 const employeeGetHandler: RequestHandler = async (req, res) => {
   const connection = await pool.getConnection();
   const cafeId = req.query.cafe;
-
+  console.log(cafeId)
   if (cafeId) {
     try {
-      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.id = ? ORDER BY days_worked DESC `;
+      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(e.start_date, NOW()) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.id = ? ORDER BY days_worked DESC `;
       const [rows]: any = await connection.execute(selectQuery, [cafeId]);
       console.log(rows);
       return res.status(StatusCodes.OK).json({ employees: rows });
@@ -48,8 +47,28 @@ const employeeGetHandler: RequestHandler = async (req, res) => {
     }
   } else {
     try {
-      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
+      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(e.start_date, NOW()) AS days_worked, c.name as cafe_name FROM employee e LEFT JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
       const [rows]: any = await connection.execute(selectQuery);
+      console.log(rows)
+      return res.status(StatusCodes.OK).json({ employees: rows });
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: error.code });
+    } finally {
+      connection.release();
+    }
+  }
+};
+
+const getSingleEmployeeHandler: RequestHandler = async (req, res) => {
+  const connection = await pool.getConnection();
+  const employeeId = req.params.id;
+
+  if (employeeId) {
+    try {
+      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE e.id = ? `;
+      const [rows]: any = await connection.execute(selectQuery, [employeeId]);
+      console.log(rows);
       return res.status(StatusCodes.OK).json({ employees: rows });
     } catch (error) {
       console.log(error);
@@ -62,13 +81,14 @@ const employeeGetHandler: RequestHandler = async (req, res) => {
 
 //Create employee entry
 const employeePostHandler: RequestHandler = async (req, res) => {
-  const { error } = employeeSchema.validate(req.body);
+  console.log(req.body);
+  // const { error } = employeeSchema.validate(req.body);
 
-  if (error) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: error.details[0].message });
-  }
+  // if (error) {
+  //   return res
+  //     .status(StatusCodes.BAD_REQUEST)
+  //     .json({ error: error.details[0].message });
+  // }
   const connection = await pool.getConnection();
   try {
     const UUID = generateUUID();
@@ -80,12 +100,13 @@ const employeePostHandler: RequestHandler = async (req, res) => {
       req.body.email_address,
       parseInt(req.body.phone_number),
       req.body.gender,
-      req.body.cafe_id,
+      req.body.cafe_id ? req.body.cafe_id : null,
       currentDate,
     ];
     const [result]: any = await connection.execute(insertQuery, body);
 
     if (result.affectedRows > 0) {
+      console.log("created")
       return res.status(StatusCodes.OK).send("Employee added successfully.");
     } else {
       throw new Error("Database error");
@@ -174,5 +195,6 @@ EmployeeController.get("/employee", employeeGetHandler);
 EmployeeController.post("/employee", employeePostHandler);
 EmployeeController.put("/employee/:id", employeePutHandler);
 EmployeeController.delete("/employee/:id", employeeDeleteHandler);
+EmployeeController.get("/employee/:id", getSingleEmployeeHandler);
 
 export default EmployeeController;
