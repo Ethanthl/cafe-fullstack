@@ -16,7 +16,7 @@ export interface EmployeeState {
   loading: boolean;
   error: string | null;
 }
-
+//fetch employee
 export const fetchEmployees = createAsyncThunk(
   "fetchEmployees",
   async (message: string | undefined, thunkAPI) => {
@@ -28,6 +28,20 @@ export const fetchEmployees = createAsyncThunk(
     return await response.data;
   }
 );
+//delete employee
+export const deleteEmployee = createAsyncThunk(
+  "fetchEmployees",
+  async (message: string | undefined, thunkAPI) => {
+    const employeeId = message;
+    const response = await axios.get(
+      `http://localhost:5000/api/employee/${employeeId}`
+    );
+
+    return await response.data;
+  }
+);
+
+
 export const employeeSlice = createSlice({
   name: "employees",
   initialState: {

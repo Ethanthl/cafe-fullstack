@@ -1,0 +1,23 @@
+.ag-ltr .ag-cell {
+    display:flex;
+    align-items: center;
+  }
+
+  .ag-row {
+    height: 60px !important
+  }
+
+  .MuiTextField-root {
+    width: 100%;
+    margin: 1rem 0 !important;
+  }
+
+  .error {
+    color: red;
+    font-size: 80%;
+    margin-top: -.9rem
+  }
+
+  .logo-field {
+    margin: 1rem 0;
+  }

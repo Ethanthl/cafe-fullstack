@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./Cafe.scss";
 import { useAppDispatch } from "../../app/hooks";
-import { fetchCafes } from "./cafeSlice";
+import { deleteCafes, fetchCafes } from "./cafeSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 
@@ -47,7 +47,33 @@ const Cafe = () => {
         return <Link to={`/cafe/${id}/employees`}>{employeeCount}</Link>;
       },
     },
-    { field: "logo" },
+    {
+      field: "logo",
+      cellRenderer: function (params: any) {
+        const logo = params.data.logo; // Assuming the ID property exists in the row data
+        return <img src={logo} width={"100px"} />;
+      },
+    },
+    {
+      field: "actions",
+      cellRenderer: function (params: any) {
+        const id = params.data.id; // Assuming the ID property exists in the row data
+        return (
+          <>
+            <Button href={`/cafe/${id}`}>Edit</Button>
+            <Button
+              onClick={() => {
+                dispatch(deleteCafes(id)).then(() => {
+                  dispatch(fetchCafes()); // Fetch cafes again after deletion
+                });
+              }}
+            >
+              Delete
+            </Button>
+          </>
+        );
+      },
+    },
   ];
 
   return (

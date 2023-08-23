@@ -8,7 +8,7 @@ import { Button, Container } from "@mui/material";
 import Grid from "../../components/Grid";
 import { ColDef } from "ag-grid-community";
 
-const Employee = () => {
+const CafeEmployee = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
 
@@ -78,4 +78,4 @@ const Employee = () => {
   );
 };
 
-export default Employee;
+export default CafeEmployee;

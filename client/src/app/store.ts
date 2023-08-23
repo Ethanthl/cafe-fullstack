@@ -2,6 +2,7 @@ import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import employeeReducer from "../features/employees/employeeSlice";
 import cafeReducer from "../features/cafe/cafeSlice";
 
+
 export const store = configureStore({
   reducer: {
     cafes: cafeReducer,

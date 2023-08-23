@@ -1,9 +1,13 @@
 import { Container } from "@mui/material";
-import CafeForm from "../../components/CafeForm";
+import React, { useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
-import { addCafe } from "./cafeSlice";
+import CafeForm from "../../components/CafeForm";
+import { editCafe, fetchIndividualCafe } from "./cafeSlice";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
-const CafeAdd = () => {
+const CafeEdit = () => {
   interface FormValues {
     id: string | null;
     name: string;
@@ -12,31 +16,27 @@ const CafeAdd = () => {
     location: string;
     employees: number;
   }
-  let initialValues: FormValues = {
-    id: null,
-    name: "",
-    description: "",
-    logo: null,
-    location: "",
-    employees: 0,
-  };
-
   const dispatch = useAppDispatch();
   const handleFormSubmit = async (values: FormValues) => {
     try {
-      await dispatch(addCafe(values));
+      await dispatch(editCafe(values));
     } catch (error) {
       console.log(error);
     }
   };
+  
+
   return (
     <Container>
       <div>
-        <h1>Create Cafe</h1>
-        <CafeForm onSubmit={handleFormSubmit}></CafeForm>
+        <h1>Edit Cafe</h1>
+        <CafeForm
+          onSubmit={handleFormSubmit}
+
+        ></CafeForm>
       </div>
     </Container>
   );
 };
 
-export default CafeAdd;
+export default CafeEdit;
