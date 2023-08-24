@@ -1,5 +1,4 @@
-import React from "react";
-import logo from "./logo.svg";
+
 import "./App.scss";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Cafe from "./features/cafe/Cafe";
@@ -8,12 +7,13 @@ import CafeAdd from "./features/cafe/CafeAdd";
 import CafeEdit from "./features/cafe/CafeEdit";
 import EmployeeAdd from "./features/employees/EmployeeAdd";
 import EmployeeEdit from "./features/employees/EmployeeEdit";
+import Home from "./features/home/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Cafe />} />
+        <Route path="/" element={<Home />} />
         <Route path="/cafes" element={<Cafe />} />
         <Route path="/cafes/add" element={<CafeAdd />}></Route>
         <Route path="/cafes/:id" element={<CafeEdit />}></Route>
