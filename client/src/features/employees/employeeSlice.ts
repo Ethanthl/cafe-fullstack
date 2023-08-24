@@ -22,14 +22,12 @@ export interface EmployeeState {
 export const fetchEmployees = createAsyncThunk(
   "fetchEmployees",
   async (data: string | null, thunkAPI) => {
-    const cafeId = data;
-    if (cafeId) {
-      const response = await axios.get(`${API_BASE_URL}/employee?cafe=${cafeId}`);
-      return await response.data;
-    } else {
-      const response = await axios.get(`${API_BASE_URL}/employee`);
-      return await response.data;
-    }
+    const cafeId = data ? data : "";
+
+    const response = await axios.get(
+      `${API_BASE_URL}/employees?cafe=${cafeId}`
+    );
+    return await response.data;
   }
 );
 //fetch Single employee

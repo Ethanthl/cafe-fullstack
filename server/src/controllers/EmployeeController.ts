@@ -23,6 +23,7 @@ const employeeSchema = Joi.object({
   email_address: Joi.string().email().required(),
   phone_number: Joi.string().custom(phoneValidator).required(),
   gender: Joi.string().required(),
+  cafe: Joi.any()
 });
 
 //This handler gets employees of a cafe if cafe is found
@@ -80,13 +81,13 @@ const getSingleEmployeeHandler: RequestHandler = async (req, res) => {
 //Create employee entry
 const employeePostHandler: RequestHandler = async (req, res) => {
   console.log(req.body);
-  // const { error } = employeeSchema.validate(req.body);
+  const { error } = employeeSchema.validate(req.body);
 
-  // if (error) {
-  //   return res
-  //     .status(StatusCodes.BAD_REQUEST)
-  //     .json({ error: error.details[0].message });
-  // }
+  if (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: error.details[0].message });
+  }
   const connection = await pool.getConnection();
   try {
     const UUID = generateUUID();
@@ -191,7 +192,7 @@ const employeeDeleteHandler: RequestHandler = async (req, res) => {
   }
 };
 
-EmployeeController.get("/employee", employeeGetHandler);
+EmployeeController.get("/employees", employeeGetHandler);
 EmployeeController.post("/employee", employeePostHandler);
 EmployeeController.put("/employee/:id", employeePutHandler);
 EmployeeController.delete("/employee/:id", employeeDeleteHandler);
