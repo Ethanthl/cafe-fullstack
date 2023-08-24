@@ -66,16 +66,6 @@ const CafeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
     return <div>Loading...</div>;
   }
 
-  if (!cafeState.data) {
-    const initialValues: FormValues = {
-      id: null,
-      name: "",
-      description: "",
-      logo: null,
-      location: "",
-      employees: 0,
-    };
-  }
 
   const cafeData = cafeState?.data?.cafes;
 
@@ -83,7 +73,7 @@ const CafeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
     id: cafeData ? cafeData[0].id : null,
     name: cafeData ? cafeData[0].name : "",
     description: cafeData ? cafeData[0].description : "",
-    logo: cafeData ? cafeData[0].logo : null,
+    logo: cafeData ? cafeData[0].logo : "",
     location: cafeData ? cafeData[0].location : "",
     employees: cafeData ? cafeData[0].employees : 0,
   };
@@ -108,7 +98,7 @@ const CafeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
               </label>
               <label htmlFor="logo">
                 <Button variant="contained" component="span">
-                  Upload Logo
+                  Upload
                 </Button>
               </label>
               <input
@@ -123,12 +113,12 @@ const CafeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
                     event.currentTarget.files && event.currentTarget.files[0];
                   if (file) {
                     setFieldValue("logo", file);
-                    initialValues.logo = null;
+                    initialValues.logo = "";
                   }
                 }}
               />
             </div>
-            {initialValues.logo !== null && (
+            {initialValues.logo !== "" && (
               <img src={initialValues.logo} style={{ width: "100px", marginTop: "1rem" }} alt="logo" />
             )}
             {values.logo && typeof values.logo !== "string" ? (

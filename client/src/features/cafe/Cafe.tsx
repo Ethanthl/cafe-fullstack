@@ -7,14 +7,20 @@ import { RootState } from "../../app/store";
 
 import Grid from "../../components/Grid";
 import { ColDef } from "ag-grid-community";
+import Swal from "sweetalert2";
 
-import { Container, Box, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Container, Box, Button, Autocomplete, TextField } from "@mui/material";
+import { Link, useLocation } from "react-router-dom";
 const Cafe = () => {
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const cafeLocation = queryParams.get("location")
+    ? queryParams.get("location")
+    : "";
   // Fetch cafes on component mount
   useEffect(() => {
-    dispatch(fetchCafes());
+    dispatch(fetchCafes(cafeLocation));
   }, [dispatch]);
   const cafeState = useSelector((state: RootState) => state.cafes);
   const cafes = cafeState?.data?.cafes;
@@ -63,8 +69,20 @@ const Cafe = () => {
             <Button href={`/cafes/${id}`}>Edit</Button>
             <Button
               onClick={() => {
-                dispatch(deleteCafes(id)).then(() => {
-                  dispatch(fetchCafes()); // Fetch cafes again after deletion
+                Swal.fire({
+                  title: "You are about to delete this entry",
+                  icon: "question",
+                  iconHtml: "?",
+                  confirmButtonText: "Confirm",
+                  cancelButtonText: "Cancel",
+                  showCancelButton: true,
+                  showCloseButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    dispatch(deleteCafes(id)).then(() => {
+                      dispatch(fetchCafes(cafeLocation)); // Fetch cafes again after deletion
+                    });
+                  }
                 });
               }}
             >
@@ -92,7 +110,18 @@ const Cafe = () => {
           Add Cafe
         </Button>
       </Box>
+      <form style={{ display: "flex", alignItems: "center"}}>
+        <TextField
+          id="location"
+          name="location"
+          label="Enter Location"
+          variant="outlined"
 
+        />
+        <Button type="submit" variant="contained" color="primary" sx={{marginLeft: "1rem", height: "fit-content", padding: "1rem"}}>
+          Search
+        </Button>
+      </form>
       <div
         id="myGrid"
         style={{ position: "relative", height: "100%", width: "100%" }}

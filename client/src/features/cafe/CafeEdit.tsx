@@ -1,13 +1,11 @@
 import { Container } from "@mui/material";
-import React, { useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import CafeForm from "../../components/CafeForm";
-import { editCafe, fetchIndividualCafe } from "./cafeSlice";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { editCafe } from "./cafeSlice";
+import { useNavigate } from "react-router-dom";
 
 const CafeEdit = () => {
+  const navigate = useNavigate();
   interface FormValues {
     id: string | null;
     name: string;
@@ -19,21 +17,21 @@ const CafeEdit = () => {
   const dispatch = useAppDispatch();
   const handleFormSubmit = async (values: FormValues) => {
     try {
-      await dispatch(editCafe(values));
+      await dispatch(editCafe(values)).then((response) => {
+        if (response.type === "editCafe/fulfilled") {
+          navigate("/");
+        }
+      });
     } catch (error) {
       console.log(error);
     }
   };
-  
 
   return (
     <Container>
       <div>
         <h1>Edit Cafe</h1>
-        <CafeForm
-          onSubmit={handleFormSubmit}
-
-        ></CafeForm>
+        <CafeForm onSubmit={handleFormSubmit}></CafeForm>
       </div>
     </Container>
   );

@@ -32,7 +32,7 @@ const employeeSchema = Joi.object({
 const employeeGetHandler: RequestHandler = async (req, res) => {
   const connection = await pool.getConnection();
   const cafeId = req.query.cafe;
-  console.log(cafeId)
+  console.log(cafeId);
   if (cafeId) {
     try {
       const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(e.start_date, NOW()) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE c.id = ? ORDER BY days_worked DESC `;
@@ -49,7 +49,6 @@ const employeeGetHandler: RequestHandler = async (req, res) => {
     try {
       const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(e.start_date, NOW()) AS days_worked, c.name as cafe_name FROM employee e LEFT JOIN cafe c ON e.cafe_id = c.id ORDER BY days_worked DESC `;
       const [rows]: any = await connection.execute(selectQuery);
-      console.log(rows)
       return res.status(StatusCodes.OK).json({ employees: rows });
     } catch (error) {
       console.log(error);
@@ -63,10 +62,9 @@ const employeeGetHandler: RequestHandler = async (req, res) => {
 const getSingleEmployeeHandler: RequestHandler = async (req, res) => {
   const connection = await pool.getConnection();
   const employeeId = req.params.id;
-
   if (employeeId) {
     try {
-      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(NOW(), e.start_date) AS days_worked, c.name as cafe_name FROM employee e JOIN cafe c ON e.cafe_id = c.id WHERE e.id = ? `;
+      const selectQuery = `SELECT e.id, e.name, e.email_address, e.phone_number, e.gender, DATEDIFF(e.start_date, NOW()) AS days_worked, c.name as cafe_name, e.cafe_id FROM employee e LEFT JOIN cafe c ON e.cafe_id = c.id WHERE e.id = ? `;
       const [rows]: any = await connection.execute(selectQuery, [employeeId]);
       console.log(rows);
       return res.status(StatusCodes.OK).json({ employees: rows });
@@ -106,7 +104,6 @@ const employeePostHandler: RequestHandler = async (req, res) => {
     const [result]: any = await connection.execute(insertQuery, body);
 
     if (result.affectedRows > 0) {
-      console.log("created")
       return res.status(StatusCodes.OK).send("Employee added successfully.");
     } else {
       throw new Error("Database error");
@@ -121,13 +118,14 @@ const employeePostHandler: RequestHandler = async (req, res) => {
 
 //Update an employee details
 const employeePutHandler: RequestHandler = async (req, res) => {
-  const { error } = employeeSchema.validate(req.body);
+  console.log(req.body);
+  // const { error } = employeeSchema.validate(req.body);
 
-  if (error) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: error.details[0].message });
-  }
+  // if (error) {
+  //   return res
+  //     .status(StatusCodes.BAD_REQUEST)
+  //     .json({ error: error.details[0].message });
+  // }
   const connection = await pool.getConnection();
   try {
     const employeeId = req.params.id;
@@ -149,7 +147,9 @@ const employeePutHandler: RequestHandler = async (req, res) => {
     //Update employee data
     const mergedData = { ...employeeData, ...updatedData };
 
-    const updateQuery = `UPDATE employee SET name = ?, email_address = ?,phone_number = ?, gender = ?, cafe_id, start_date = ? WHERE id = ?`;
+    const updateQuery = `UPDATE employee SET name = ?, email_address = ?,phone_number = ?, gender = ?, cafe_id = ?, start_date = ? WHERE id = ?`;
+    console.log(employeeData);
+    console.log(updatedData);
     const [update]: any = await connection.execute(updateQuery, [
       mergedData.name,
       mergedData.email_address,

@@ -16,20 +16,26 @@ export interface CafeState {
   loading: boolean;
   error: string | null;
 }
-
+const API_BASE_URL = "http://localhost:5000/api";
 //Fetch cafes
-export const fetchCafes = createAsyncThunk("fetchCafes", async (thunkAPI) => {
-  const response = await axios.get("http://localhost:5000/api/cafe/");
+export const fetchCafes = createAsyncThunk(
+  "fetchCafes",
+  async (data: string | null, thunkAPI) => {
+    const location = data;
+    const response = await axios.get(
+      `${API_BASE_URL}/cafe?location=${location}`
+    );
 
-  return await response.data;
-});
+    return await response.data;
+  }
+);
 
 //Fetch individual cafe
 export const fetchIndividualCafe = createAsyncThunk(
   "fetchIndividualCafes",
   async (data: string, thunkAPI) => {
     const id = data;
-    const response = await axios.get(`http://localhost:5000/api/cafe/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/cafe/${id}`);
 
     return await response.data;
   }
@@ -58,15 +64,11 @@ export const addCafe = createAsyncThunk(
           ([key]) => !propertiesToRemove.includes(key)
         )
       );
-      const response = await axios.post(
-        `http://localhost:5000/api/cafe/`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/cafe/`, newData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(await response);
       return await response.data.cafe;
     } catch (error) {
@@ -76,9 +78,8 @@ export const addCafe = createAsyncThunk(
 );
 
 export const editCafe = createAsyncThunk(
-  "addCafe",
+  "editCafe",
   async (data: Cafe, thunkAPI) => {
-    
     try {
       //remove id and employees from form data as it is not needed
       const id = data.id;
@@ -89,15 +90,11 @@ export const editCafe = createAsyncThunk(
         )
       );
       console.log(newData);
-      const response = await axios.put(
-        `http://localhost:5000/api/cafe/${id}`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.put(`${API_BASE_URL}/cafe/${id}`, newData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(await response);
       return await response.data.cafe;
     } catch (error) {
@@ -114,9 +111,7 @@ export const cafeSlice = createSlice({
     error: null as string | null,
   },
   // The `reducers` field lets us define reducers and generate associated actions
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchCafes.pending, (state) => {
@@ -145,6 +140,5 @@ export const cafeSlice = createSlice({
       });
   },
 });
-
 
 export default cafeSlice.reducer;

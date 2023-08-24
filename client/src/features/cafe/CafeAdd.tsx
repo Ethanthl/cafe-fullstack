@@ -2,8 +2,10 @@ import { Container } from "@mui/material";
 import CafeForm from "../../components/CafeForm";
 import { useAppDispatch } from "../../app/hooks";
 import { addCafe } from "./cafeSlice";
+import { useNavigate } from "react-router-dom";
 
 const CafeAdd = () => {
+  const navigate = useNavigate()
   interface FormValues {
     id: string | null;
     name: string;
@@ -16,7 +18,11 @@ const CafeAdd = () => {
   const dispatch = useAppDispatch();
   const handleFormSubmit = async (values: FormValues) => {
     try {
-      await dispatch(addCafe(values));
+      await dispatch(addCafe(values)).then((response) => {
+        if(response.type === "addCafe/fulfilled"){
+          navigate("/")
+        }
+      });
     } catch (error) {
       console.log(error);
     }

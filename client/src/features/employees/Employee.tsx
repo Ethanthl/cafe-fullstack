@@ -3,22 +3,26 @@ import { useAppDispatch } from "../../app/hooks";
 import { deleteEmployee, fetchEmployees } from "./employeeSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Box, Button, Container } from "@mui/material";
 import Grid from "../../components/Grid";
 import { ColDef } from "ag-grid-community";
+import Swal from "sweetalert2";
 
 const Employee = () => {
-  const { id } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get("cafe");
   const dispatch = useAppDispatch();
+  const employees = useSelector(
+    (state: RootState) => state.employees.employees?.employees
+  );
 
-  //   Fetch cafes on component mount
+  //   Fetch employees on component mount
   useEffect(() => {
     dispatch(fetchEmployees(id));
-  }, [dispatch]);
-  const employeeState = useSelector((state: RootState) => state.employees.data);
-  const employees = employeeState?.employees;
-  console.log(employees);
+  }, [id, dispatch]);
+  //   console.log(employeeState)
   const rowData = employees?.map((item) => {
     return {
       id: item.id,
@@ -48,13 +52,28 @@ const Employee = () => {
       cellRenderer: function (params: any) {
         const id = params.data.id; // Assuming the ID property exists in the row data
         return (
-          <Button
-            onClick={() => {
-              dispatch(deleteEmployee(id));
-            }}
-          >
-            Delete
-          </Button>
+          <>
+            <Button href={`/employees/${id}`}>Edit</Button>
+            <Button
+              onClick={() => {
+                Swal.fire({
+                  title: "You are about to delete this entry",
+                  icon: "question",
+                  iconHtml: "?",
+                  confirmButtonText: "Confirm",
+                  cancelButtonText: "Cancel",
+                  showCancelButton: true,
+                  showCloseButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    dispatch(deleteEmployee(id));
+                  }
+                });
+              }}
+            >
+              Delete
+            </Button>
+          </>
         );
       },
     },

@@ -7,14 +7,17 @@ import { useAppDispatch } from "../app/hooks";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { fetchCafes } from "../features/cafe/cafeSlice";
+import { fetchSingleEmployee } from "../features/employees/employeeSlice";
 
 interface FormValues {
   id: string | null;
   name: string;
   email_address: string;
-  phone_number: string;
+  phone_number: any;
   gender: string;
+  cafe_name: string | null;
   cafe_id: string | null;
+  days_worked: string | null;
 }
 
 interface CafeFormProps {
@@ -43,9 +46,10 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
 
   useEffect(() => {
     if (id) {
-      dispatch(getSingleEmployee(id));
+      console.log("fetch");
+      dispatch(fetchSingleEmployee(id));
     }
-    dispatch(fetchCafes());
+    dispatch(fetchCafes(null));
   }, [id, dispatch]);
 
   const employeeState = useSelector((state: RootState) => state.employees);
@@ -56,7 +60,7 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
     return <div>Loading...</div>;
   }
 
-  if (!employeeState.data) {
+  if (!employeeState.employees) {
     const initialValues: FormValues = {
       id: null,
       name: "",
@@ -64,18 +68,21 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
       phone_number: "",
       gender: "",
       cafe_id: "",
+      cafe_name: null,
+      days_worked: null,
     };
   }
-
-  const employeeData = employeeState?.data?.employees;
+  const employeeData = employeeState?.employees?.employees;
 
   const initialValues: FormValues = {
-    id: employeeData ? employeeData[0].id : null,
-    name: employeeData ? employeeData[0].name : "",
-    email_address: employeeData ? employeeData[0].email_address : "",
-    phone_number: employeeData ? employeeData[0].phone_number : "",
-    gender: employeeData ? employeeData[0].gender : "",
-    cafe_id: employeeData ? employeeData[0].cafe_name : "",
+    id: employeeData ? employeeData[0]?.id : null,
+    name: employeeData ? employeeData[0]?.name : "",
+    email_address: employeeData ? employeeData[0]?.email_address : "",
+    phone_number: employeeData ? employeeData[0]?.phone_number : "",
+    gender: employeeData ? employeeData[0]?.gender : "",
+    cafe_id: employeeData ? employeeData[0]?.cafe_id : "",
+    cafe_name: null,
+    days_worked: null,
   };
   return (
     <Formik
@@ -83,7 +90,7 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ setFieldValue, values, initialValues }) => (
+      {({ values, initialValues }) => (
         <FormikForm>
           <div>
             <Field
@@ -150,6 +157,7 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
           </div>
 
           <div>
+            <InputLabel>Assign Cafe</InputLabel>
             <Field
               as={Select}
               type="text"
@@ -157,12 +165,13 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
               name="cafe_id"
               variant="outlined"
               label="Select a cafe"
-              required
               sx={{ width: "100%", margin: "1rem 0" }}
             >
               <MenuItem value="">Select a cafe</MenuItem>
-              {cafeData?.map((cafe) => (
-                <MenuItem value={cafe.id?.toString()}>{cafe.name}</MenuItem>
+              {cafeData?.map((cafe, key) => (
+                <MenuItem key={key} value={cafe.id?.toString()}>
+                  {cafe.name}
+                </MenuItem>
               ))}
             </Field>
           </div>
@@ -179,6 +188,3 @@ const EmployeeForm: React.FC<CafeFormProps> = ({ onSubmit }) => {
   );
 };
 export default EmployeeForm;
-function getSingleEmployee(id: string): any {
-  throw new Error("Function not implemented.");
-}

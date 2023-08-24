@@ -7,6 +7,7 @@ import Employee from "./features/employees/Employee";
 import CafeAdd from "./features/cafe/CafeAdd";
 import CafeEdit from "./features/cafe/CafeEdit";
 import EmployeeAdd from "./features/employees/EmployeeAdd";
+import EmployeeEdit from "./features/employees/EmployeeEdit";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/cafes/:id" element={<CafeEdit />}></Route>
         <Route path="/employees" element={<Employee />}></Route>
         <Route path="/employees/add" element={<EmployeeAdd />}></Route>
+        <Route path="/employees/:id" element={<EmployeeEdit />}></Route>
       </Routes>
     </BrowserRouter>
   );
