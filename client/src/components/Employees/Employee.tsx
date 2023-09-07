@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
-import { deleteEmployee, fetchEmployees } from "./employeeSlice";
+import { deleteEmployee, fetchEmployees } from "../../features/employees/employeeSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useLocation, useParams } from "react-router-dom";
 import { Box, Button, Container } from "@mui/material";
-import Grid from "../../components/Grid";
+import Grid from "../Grid";
 import { ColDef } from "ag-grid-community";
 import Swal from "sweetalert2";
 

@@ -1,21 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import dataUriToBuffer from "data-uri-to-buffer";
+import { Cafe, CafeState } from "./cafeTypes";
 
-export interface Cafe {
-  id: string | null;
-  name: string;
-  description: string;
-  logo: any;
-  location: string;
-  employees: number;
-}
-
-export interface CafeState {
-  cafes: Cafe[];
-  loading: boolean;
-  error: string | null;
-}
 const API_BASE_URL = "http://localhost:5000/api";
 //Fetch cafes
 export const fetchCafes = createAsyncThunk(

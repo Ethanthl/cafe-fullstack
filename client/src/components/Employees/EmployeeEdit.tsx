@@ -1,11 +1,10 @@
 import { Container } from "@mui/material";
 import { useAppDispatch } from "../../app/hooks";
-import { addEmployee } from "./employeeSlice";
-import EmployeeForm from "../../components/EmployeeForm";
+import { editEmployee } from "../../features/employees/employeeSlice";
+import EmployeeForm from "../EmployeeForm";
 import { useNavigate } from "react-router-dom";
-import { isFulfilled } from "@reduxjs/toolkit";
 
-const EmployeeAdd = () => {
+const EmployeeEdit = () => {
   const navigate = useNavigate();
   interface FormValues {
     id: string | null;
@@ -21,20 +20,13 @@ const EmployeeAdd = () => {
   const dispatch = useAppDispatch();
   const handleFormSubmit = async (values: FormValues) => {
     try {
-      await dispatch(addEmployee(values)).then((response) => {
-        console.log(response);
-        if (response.type === "employees/add/fulfilled") {
+      await dispatch(editEmployee(values)).then((response) => {
+        if (response) {
+          console.log(response);
           navigate("/employees");
-        } else {
-          if (response.payload.response.data.message === "ER_DUP_ENTRY")
-            throw new Error("Email already registered");
-          else {
-            throw new Error("Database error");
-          }
         }
       });
     } catch (error) {
-      alert(error);
       console.log(error);
     }
   };
@@ -48,4 +40,4 @@ const EmployeeAdd = () => {
   );
 };
 
-export default EmployeeAdd;
+export default EmployeeEdit;

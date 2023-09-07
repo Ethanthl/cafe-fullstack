@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import "./Cafe.scss";
 import { useAppDispatch } from "../../app/hooks";
-import { deleteCafes, fetchCafes } from "./cafeSlice";
+import { deleteCafes, fetchCafes } from "../../features/cafe/cafeSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 
-import Grid from "../../components/Grid";
+import Grid from "../Grid";
 import { ColDef } from "ag-grid-community";
 import Swal from "sweetalert2";
 
@@ -22,6 +22,7 @@ const Cafe = () => {
   useEffect(() => {
     dispatch(fetchCafes(cafeLocation));
   }, [dispatch]);
+  
   const cafeState = useSelector((state: RootState) => state.cafes);
   const cafes = cafeState?.data?.cafes;
 

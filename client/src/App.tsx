@@ -1,13 +1,13 @@
 
 import "./App.scss";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Cafe from "./features/cafe/Cafe";
-import Employee from "./features/employees/Employee";
-import CafeAdd from "./features/cafe/CafeAdd";
-import CafeEdit from "./features/cafe/CafeEdit";
-import EmployeeAdd from "./features/employees/EmployeeAdd";
-import EmployeeEdit from "./features/employees/EmployeeEdit";
-import Home from "./features/home/Home";
+import Cafe from "./components/Cafe/Cafe";
+import Employee from "./components/Employees/Employee";
+import CafeAdd from "./components/Cafe/CafeAdd";
+import CafeEdit from "./components/Cafe/CafeEdit";
+import EmployeeAdd from "./components/Employees/EmployeeAdd";
+import EmployeeEdit from "./components/Employees/EmployeeEdit";
+import Home from "./components/Home/Home";
 
 function App() {
   return (
